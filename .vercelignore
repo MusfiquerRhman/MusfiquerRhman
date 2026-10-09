@@ -1,0 +1,17 @@
+# Local credentials, database files, and development-only artifacts.
+.env*
+.local/
+.verification/
+.git/
+.vercel/
+.next/
+node_modules/
+test-results/
+playwright-report/
+tests/
+playwright.config.ts
+scripts/local-postgres.mjs
+scripts/setup-local.mjs
+scripts/admin-password.mjs
+scripts/smtp-preview.mjs
+scripts/configure-vercel.mjs
