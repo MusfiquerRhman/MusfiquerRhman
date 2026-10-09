@@ -47,7 +47,9 @@ export default async function BlogPost({ params }: Props) {
           <header className="article-header">
             <div className="tags">
               {post.tags.map((tag) => (
-                <span key={tag}>{tag}</span>
+                <Link key={tag} href={`/blog?tag=${encodeURIComponent(tag)}`}>
+                  {tag}
+                </Link>
               ))}
             </div>
             <h1>{post.title}</h1>
@@ -83,6 +85,7 @@ export default async function BlogPost({ params }: Props) {
             "@type": "BlogPosting",
             headline: post.title,
             description: post.excerpt,
+            keywords: post.tags.join(", "),
             datePublished: (post.published_at || post.created_at).toISOString(),
             dateModified: post.updated_at.toISOString(),
             author: {

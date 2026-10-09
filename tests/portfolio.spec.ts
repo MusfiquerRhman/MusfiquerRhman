@@ -13,6 +13,7 @@ const email = process.env.ADMIN_EMAIL!;
 const slug = `test-${randomUUID()}`;
 const title = "A test of thoughtful software";
 let postId: string;
+const createdTagIds: string[] = [];
 const origin = { Origin: "http://localhost:3000" };
 const localLoginKey = createHash("sha256")
   .update(`login:${createHash("sha256").update("local").digest("hex")}`)
@@ -40,6 +41,9 @@ test.afterAll(async () => {
   await database.query("DELETE FROM rate_limits WHERE key = $1", [
     localLoginKey,
   ]);
+  await database.query("DELETE FROM blog_tags WHERE id = ANY($1::uuid[])", [
+    createdTagIds,
+  ]);
   await database.end();
 });
 
@@ -51,6 +55,10 @@ test("portfolio links, original CV, and mobile layout", async ({
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "I build things",
   );
+  await expect(
+    page.locator("footer").getByRole("link", { name: "Admin", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator('footer a[href^="/musfiq97"]')).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Download CV" })).toHaveAttribute(
     "download",
     "",
@@ -111,16 +119,19 @@ test("admin mutations require authentication and the correct origin", async ({
     data: { email, password },
   });
   expect(crossSite.status()).toBe(403);
-  const protectedPage = await request.get("/admin/new", { maxRedirects: 0 });
+  const protectedPage = await request.get("/musfiq97/new", { maxRedirects: 0 });
   expect(protectedPage.status()).toBe(307);
-  expect(protectedPage.headers().location).toContain("/admin/login");
+  expect(protectedPage.headers().location).toContain("/musfiq97/login");
+  for (const path of ["/admin", "/admin/login", "/admin/new"]) {
+    expect((await request.get(path, { maxRedirects: 0 })).status()).toBe(404);
+  }
 });
 
 test("sign in, preview Markdown, save a private draft, and publish", async ({
   page,
   request,
 }) => {
-  await page.goto("/admin/login");
+  await page.goto("/musfiq97/login");
   await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill("wrong-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -129,7 +140,7 @@ test("sign in, preview Markdown, save a private draft, and publish", async ({
   );
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page).toHaveURL(/\/admin$/);
+  await expect(page).toHaveURL(/\/musfiq97$/);
   await expect(page.locator("meta[name='robots']")).toHaveAttribute(
     "content",
     /noindex/,
@@ -145,7 +156,23 @@ test("sign in, preview Markdown, save a private draft, and publish", async ({
     .fill(
       "An integration test of publishing, metadata, and safe Markdown rendering.",
     );
-  await page.getByLabel("Tags", { exact: false }).fill("TypeScript, Testing");
+  for (const tag of ["TypeScript", "Testing"]) {
+    const choice = page.getByRole("checkbox", { name: tag, exact: true });
+    if (await choice.count()) await choice.check();
+    else {
+      await page.getByLabel("New tag name", { exact: true }).fill(tag);
+      const result = page.waitForResponse(
+        (response) =>
+          response.url().endsWith("/api/admin/tags") &&
+          response.request().method() === "POST",
+      );
+      await page.getByRole("button", { name: "Add tag", exact: true }).click();
+      const response = await result;
+      expect(response.status()).toBe(201);
+      createdTagIds.push((await response.json()).tag.id);
+      await expect(choice).toBeChecked();
+    }
+  }
   await page.getByLabel("Markdown content").fill(content);
   await page.getByRole("tab", { name: "preview", exact: true }).click();
   await expect(
@@ -191,7 +218,7 @@ test("sign in, preview Markdown, save a private draft, and publish", async ({
     fullPage: true,
   });
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page).toHaveURL(/\/musfiq97\/login$/);
 });
 
 test("published posts are server-rendered with SEO metadata and safe Markdown", async ({
@@ -225,7 +252,7 @@ test("published posts are server-rendered with SEO metadata and safe Markdown", 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   expect(sitemap).toContain(`/blog/${slug}`);
   const robots = await (await request.get("/robots.txt")).text();
-  expect(robots).toContain("Disallow: /admin");
+  expect(robots).toContain("Disallow: /musfiq97");
   expect(
     (await request.get("/opengraph-image")).headers()["content-type"],
   ).toContain("image/png");

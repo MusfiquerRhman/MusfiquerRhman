@@ -20,6 +20,25 @@ export const loginSchema = z.object({
   password: z.string().min(1).max(256),
 });
 
+export const tagSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Give the tag a name.")
+    .max(30, "Tag names can have up to 30 characters."),
+});
+
+export const featuredSchema = z
+  .object({
+    slots: z
+      .array(z.uuid().nullable())
+      .length(3, "Choose up to three featured posts."),
+  })
+  .refine(({ slots }) => {
+    const ids = slots.filter((id) => id !== null);
+    return new Set(ids).size === ids.length;
+  }, "Choose each post only once.");
+
 export const postSchema = z.object({
   title: z.string().trim().min(3).max(150),
   slug: z

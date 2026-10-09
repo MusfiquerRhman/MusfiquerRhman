@@ -9,6 +9,8 @@ import {
   ArrowUpRight,
   Plus,
   Terminal,
+  Star,
+  Tags,
 } from "lucide-react";
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
@@ -21,7 +23,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch("/api/admin/logout", { method: "POST" });
       if (!response.ok) throw new Error();
-      router.push("/admin/login");
+      router.push("/musfiq97/login");
       router.refresh();
     } catch {
       setError("Could not sign out. Try again.");
@@ -43,18 +45,37 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <span className="admin-sidebar-label">YOUR WORKSPACE</span>
         <nav aria-label="Admin navigation">
           <Link
-            className={!path.includes("messages") ? "active" : ""}
-            href="/admin"
+            className={
+              path === "/musfiq97" || path.startsWith("/musfiq97/edit")
+                ? "active"
+                : ""
+            }
+            href="/musfiq97"
           >
             <FileText size={18} /> Blog posts
           </Link>
           <Link
+            className={path === "/musfiq97/featured" ? "active" : ""}
+            href="/musfiq97/featured"
+          >
+            <Star size={18} /> Featured posts
+          </Link>
+          <Link
+            className={path === "/musfiq97/tags" ? "active" : ""}
+            href="/musfiq97/tags"
+          >
+            <Tags size={18} /> Tags
+          </Link>
+          <Link
             className={path.includes("messages") ? "active" : ""}
-            href="/admin/messages"
+            href="/musfiq97/messages"
           >
             <Mail size={18} /> Messages
           </Link>
-          <Link href="/admin/new">
+          <Link
+            className={path === "/musfiq97/new" ? "active" : ""}
+            href="/musfiq97/new"
+          >
             <Plus size={18} /> New post
           </Link>
         </nav>
@@ -78,7 +99,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <div className="admin-main">
         <header className="admin-topbar">
           <span>
-            ~/admin{path === "/admin" ? "/posts" : path.replace("/admin", "")}
+            ~/musfiq97
+            {path === "/musfiq97" ? "/posts" : path.replace("/musfiq97", "")}
           </span>
           <span className="admin-secure">
             <span className="status-dot" /> AUTHENTICATED

@@ -22,7 +22,7 @@ export function LoginForm() {
         setError(data.error);
         return;
       }
-      router.push("/admin");
+      router.push("/musfiq97");
       router.refresh();
     } catch {
       setError("Could not connect. Please try again.");

@@ -12,6 +12,8 @@ import {
   Columns2,
 } from "lucide-react";
 import { Markdown } from "@/components/markdown";
+import { TagPicker } from "@/components/admin/tag-picker";
+import type { BlogTag } from "@/lib/tags";
 type Initial = {
   id: string;
   title: string;
@@ -21,14 +23,20 @@ type Initial = {
   tags: string[];
   published: boolean;
 };
-export function Editor({ initial }: { initial?: Initial }) {
+export function Editor({
+  initial,
+  availableTags,
+}: {
+  initial?: Initial;
+  availableTags: BlogTag[];
+}) {
   const router = useRouter();
   const [title, setTitle] = useState(initial?.title || "");
   const [slug, setSlug] = useState(initial?.slug || "");
   const [slugEdited, setSlugEdited] = useState(Boolean(initial));
   const [excerpt, setExcerpt] = useState(initial?.excerpt || "");
   const [content, setContent] = useState(initial?.content || "");
-  const [tags, setTags] = useState(initial?.tags.join(", ") || "");
+  const [tags, setTags] = useState<string[]>(initial?.tags || []);
   const [mode, setMode] = useState("write");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -57,14 +65,7 @@ export function Editor({ initial }: { initial?: Initial }) {
             slug,
             excerpt,
             content,
-            tags: [
-              ...new Set(
-                tags
-                  .split(",")
-                  .map((t) => t.trim())
-                  .filter(Boolean),
-              ),
-            ],
+            tags,
             published,
           }),
         },
@@ -74,7 +75,7 @@ export function Editor({ initial }: { initial?: Initial }) {
         setError(data.error);
         return;
       }
-      router.push(`/admin?notice=${published ? "published" : "saved"}`);
+      router.push(`/musfiq97?notice=${published ? "published" : "saved"}`);
       router.refresh();
     } catch {
       setError(
@@ -86,7 +87,7 @@ export function Editor({ initial }: { initial?: Initial }) {
   }
   return (
     <>
-      <Link className="text-link" href="/admin">
+      <Link className="text-link" href="/musfiq97">
         <ArrowLeft size={15} /> Back to posts
       </Link>
       <div className="admin-page-heading editor-page-heading">
@@ -166,16 +167,12 @@ export function Editor({ initial }: { initial?: Initial }) {
             rows={2}
           />
         </label>
-        <label className="excerpt-field" htmlFor="post-tags">
-          Tags{" "}
-          <span className="field-help">Separate with commas · up to 8</span>
-          <input
-            id="post-tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="TypeScript, Next.js, Engineering"
-          />
-        </label>
+        <TagPicker
+          available={availableTags}
+          selected={tags}
+          onChange={setTags}
+          disabled={pending}
+        />
       </div>
       <div className="markdown-editor">
         <div className="editor-toolbar">

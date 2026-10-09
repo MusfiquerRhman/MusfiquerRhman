@@ -4,13 +4,14 @@ import { db } from "@/lib/db";
 import type { Post } from "@/lib/posts";
 import { AdminShell } from "@/components/admin/shell";
 import { Editor } from "@/components/admin/editor";
+import { blogTags } from "@/lib/tags";
 export const dynamic = "force-dynamic";
 export default async function EditPost({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!(await isAdmin())) redirect("/admin/login");
+  if (!(await isAdmin())) redirect("/musfiq97/login");
   const { id } = await params;
   if (!/^[a-f0-9-]{36}$/i.test(id)) notFound();
   const { rows } = await db().query<Post>("SELECT * FROM posts WHERE id=$1", [
@@ -21,6 +22,7 @@ export default async function EditPost({
   return (
     <AdminShell>
       <Editor
+        availableTags={await blogTags()}
         initial={{
           id: p.id,
           title: p.title,

@@ -5,7 +5,7 @@ import { isAdmin } from "@/lib/auth";
 import { LoginForm } from "@/components/admin/login-form";
 export const dynamic = "force-dynamic";
 export default async function LoginPage() {
-  if (await isAdmin()) redirect("/admin");
+  if (await isAdmin()) redirect("/musfiq97");
   return (
     <main id="main" className="login-page">
       <Link className="login-home text-link" href="/">

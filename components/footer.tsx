@@ -11,9 +11,6 @@ export function Footer() {
         <Link href="/blog">
           Writing <ArrowUpRight size={12} />
         </Link>
-        <Link href="/admin">
-          Admin <ArrowUpRight size={12} />
-        </Link>
         <Link href="/#top">Back to top ↑</Link>
       </div>
     </footer>

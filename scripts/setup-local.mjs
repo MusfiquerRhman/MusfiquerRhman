@@ -19,7 +19,7 @@ writeFileSync(
 );
 writeFileSync(
   ".local/admin-access.txt",
-  `Private admin access\n\nURL: http://localhost:3000/admin\nEmail: musfiquerrhman@gmail.com\nPassword: ${adminPassword}\n\nThis password is generated for your local installation. Rotate it with npm run admin:password.\nNever share or commit this file.\n`,
+  `Private admin access\n\nURL: http://localhost:3000/musfiq97\nEmail: musfiquerrhman@gmail.com\nPassword: ${adminPassword}\n\nThis password is generated for your local installation. Rotate it with npm run admin:password.\nNever share or commit this file.\n`,
   { mode: 0o600 },
 );
 console.log(

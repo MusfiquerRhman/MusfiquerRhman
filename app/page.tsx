@@ -13,15 +13,14 @@ import {
   Mail,
   MessageCircle,
   Code2,
-  GraduationCap,
-  BookOpen,
 } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Orb } from "@/components/orb";
 import { ContactForm } from "@/components/contact-form";
 import { PostCard } from "@/components/post-card";
-import { publishedPosts } from "@/lib/posts";
+import { Journey } from "@/components/journey";
+import { featuredPosts } from "@/lib/posts";
 import { absoluteUrl, jsonLd, profile } from "@/lib/site";
 export const dynamic = "force-dynamic";
 export const metadata = { alternates: { canonical: "/" } };
@@ -58,10 +57,10 @@ const projects = [
   },
 ];
 export default async function Home() {
-  let posts: Awaited<ReturnType<typeof publishedPosts>> = [];
+  let posts: Awaited<ReturnType<typeof featuredPosts>> = [];
   let writingUnavailable = false;
   try {
-    posts = await publishedPosts(3);
+    posts = await featuredPosts();
   } catch {
     writingUnavailable = true;
   }
@@ -342,79 +341,11 @@ export default async function Home() {
             ))}
           </div>
           <p className="work-footnote">
-            <span className="green">{"//"}</span> Selected client work. Project
-            details are summarized from my CV.
+            <span className="green">{"//"}</span> Selected work. Project details
+            are summarized from my CV.
           </p>
         </section>
-        <section className="section container" id="experience">
-          <div className="section-title-row">
-            <div>
-              <span className="section-index">03 / THE JOURNEY</span>
-              <h2>
-                Experience that shapes my work<span className="green">.</span>
-              </h2>
-            </div>
-          </div>
-          <div className="journey-grid">
-            <div className="journey-column">
-              <div className="column-label">
-                <Terminal size={17} /> EXPERIENCE
-              </div>
-              <article className="timeline-item">
-                <span className="timeline-date">APR 2025 — PRESENT</span>
-                <h3>Executive Programmer</h3>
-                <span className="green">Renaissance Group</span>
-                <p>
-                  Architect and full-stack developer of the Buying House ERP.
-                  Building background processing, email integrations, real-time
-                  notifications, and permission systems with an Atomic Design
-                  approach.
-                </p>
-              </article>
-              <article className="timeline-item">
-                <span className="timeline-date">MAY 2022 — FEB 2025</span>
-                <h3>Freelance Full-stack Developer</h3>
-                <span className="green">Upwork</span>
-                <p>
-                  Delivered software for Utah Valley University, Wellness Media
-                  LLC, and Apps Tango, working across student feedback, media
-                  management, and other application projects.
-                </p>
-              </article>
-            </div>
-            <div className="journey-column">
-              <div className="column-label">
-                <GraduationCap size={19} /> EDUCATION &amp; RESEARCH
-              </div>
-              <article className="timeline-item">
-                <span className="timeline-date">IN PROGRESS</span>
-                <h3>Master of Data Science</h3>
-                <span className="green">
-                  Bangladesh University of Professionals
-                </span>
-                <p>
-                  Exploring AI, machine learning, deep learning, data mining,
-                  and data analysis.
-                </p>
-              </article>
-              <article className="timeline-item">
-                <span className="timeline-date">DEC 2021</span>
-                <h3>BSc in Computer Science &amp; Engineering</h3>
-                <span className="green">
-                  Bangladesh University of Business and Technology
-                </span>
-                <p>Graduated with a CGPA of 3.93.</p>
-              </article>
-              <div className="research-note">
-                <BookOpen size={20} />
-                <p>
-                  <span>IEEE RESEARCH PUBLICATION</span>Predicting Alzheimer
-                  disease at low cost using machine learning
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Journey />
         <section className="section stack-section" id="stack">
           <div className="container">
             <div className="section-title-row">
@@ -518,17 +449,17 @@ export default async function Home() {
                 <span className="green mono">
                   {writingUnavailable
                     ? "connection.interrupted"
-                    : "notes.in_progress"}
+                    : "notes.to_explore"}
                 </span>
                 <h3>
                   {writingUnavailable
                     ? "My writing will be back shortly."
-                    : "Every good idea starts with a blank page."}
+                    : "Every good idea starts with curiosity."}
                 </h3>
                 <p>
                   {writingUnavailable
                     ? "Please check back soon for articles and experiments."
-                    : "This is where I’ll share what I’m building, exploring, and learning. First notes coming soon."}
+                    : "Explore my field notes on what I’m building, discovering, and learning."}
                 </p>
               </div>
               <Link

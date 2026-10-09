@@ -18,7 +18,7 @@ npm run dev
 
 - Portfolio: [localhost:3000](http://localhost:3000)
 - Blog: [localhost:3000/blog](http://localhost:3000/blog)
-- Admin: [localhost:3000/admin](http://localhost:3000/admin)
+- Admin: [localhost:3000/musfiq97](http://localhost:3000/musfiq97)
 - Private admin email and password: `.local/admin-access.txt`
 
 The database runs on `127.0.0.1:15432`; data is stored in `.local/postgres` and survives restarts. Stop the website and database with Ctrl+C in their respective terminals. The database binds only to loopback and uses SCRAM password authentication.
@@ -55,11 +55,15 @@ Messages are saved even when SMTP is missing or fails. Visitors receive a truthf
 
 ## Write and publish
 
-1. Open `/admin` and sign in with the email and password in `.local/admin-access.txt`.
-2. Choose **New post**. Add a title, URL slug, description, and optional comma-separated tags.
+1. Open `/musfiq97` and sign in with the email and password in `.local/admin-access.txt`.
+2. Choose **New post**. Add a title, URL slug, description, and optional tags from your tag library. Create a tag directly in the editor with **Add tag**, or manage the library in **Admin → Tags**. Each post can have up to eight tags; names have up to 30 characters and are unique regardless of capitalization. Existing post tags are imported into the library by the database migration.
 3. Write Markdown. Use **Write**, **Preview**, or **Split** to inspect headings, lists, code blocks, links, tables, and task lists.
-4. **Save draft** keeps a post private. **Publish post** makes it appear in the blog, homepage writing section, and sitemap immediately.
+4. **Save draft** keeps a post private. **Publish post** makes it appear in the blog and sitemap immediately. To show it on the homepage, choose it in **Admin → Featured posts**.
 5. Use the dashboard to edit or delete posts. **Save as draft** on a published post removes it from public pages.
+
+In **Admin → Featured posts**, choose up to three published posts and their order, then click **Save featured posts**. Only these selections appear in the homepage’s Field notes section. Empty slots are allowed. Unpublishing or deleting a featured post clears its slot; republishing does not silently feature it again.
+
+Readers can filter `/blog` by tag. Filters have shareable URLs such as `/blog?tag=TypeScript`; clicking an article’s tag opens that filtered list. Only tags used by published posts appear publicly, and filtered pages have their own titles, descriptions, and canonical URLs. **All posts** or **Clear filter** returns to the full list. Removing a tag in **Admin → Tags** also removes it from posts, while preserving the posts themselves.
 
 Raw HTML is skipped and unsafe URL schemes are removed when rendering Markdown. Images referenced in Markdown are hosted at the URLs you provide; an image uploader is not included. Slugs are unique and collisions produce a useful error.
 
@@ -84,6 +88,8 @@ Use a Node.js-compatible Next.js host and a persistent PostgreSQL service. A sta
 ### Vercel deployment
 
 This checkout is linked to the `musfiquer-rhman` project in `musfiquer-rhmans-projects`. Its hosted database is `musfiquer-rhman-db` on the Neon free plan in Singapore; the Vercel functions use the same region. Local PostgreSQL remains separate. The live admin credentials are in `.local/production-admin-access.txt` and differ from the local login.
+
+Vercel is connected to `MusfiquerRhman/MusfiquerRhman` on GitHub. Commits pushed to `main` build and update the production site automatically after a successful build; other branches get preview deployments. Changes to posts, tags, and homepage selections are saved directly in PostgreSQL and do not need a Git push or redeployment. Before deploying code that changes `database/schema.sql`, apply the migration to the hosted database using the private environment file instructions below.
 
 The custom domain is `musfiquer.dev`, with `www.musfiquer.dev` configured to redirect to it. DNS stays with Namecheap. In **Domain List → Manage → Advanced DNS → Host Records**, use an **A Record** for host `@` pointing to `216.198.79.1`, and a **CNAME Record** for `www` pointing to `4d9e099da58be138.vercel-dns-017.com`. Use Automatic TTL and replace only the root parking/URL Redirect record and the `www` parking CNAME. Keep the existing nameservers and email records. These targets were retrieved from Vercel for this project; inspect the domain again if Vercel requests a future DNS change.
 

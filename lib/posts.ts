@@ -15,11 +15,22 @@ export type Post = {
   updated_at: Date;
 };
 
-export async function publishedPosts(limit = 100) {
+export async function publishedPosts(limit = 100, tag?: string) {
   if (!process.env.DATABASE_URL) return [];
   const { rows } = await db().query<Post>(
-    "SELECT * FROM posts WHERE published = true ORDER BY published_at DESC LIMIT $1",
-    [limit],
+    `SELECT * FROM posts WHERE published = true
+     AND ($2::text IS NULL OR tags @> ARRAY[$2]::text[])
+     ORDER BY published_at DESC LIMIT $1`,
+    [limit, tag ?? null],
+  );
+  return rows;
+}
+
+export async function featuredPosts() {
+  if (!process.env.DATABASE_URL) return [];
+  const { rows } = await db().query<Post>(
+    `SELECT p.* FROM featured_posts f JOIN posts p ON p.id = f.post_id
+     WHERE p.published = true ORDER BY f.slot`,
   );
   return rows;
 }

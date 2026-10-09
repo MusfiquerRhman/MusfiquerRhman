@@ -17,7 +17,7 @@ writeFileSync(".env.local", updated, { mode: 0o600 });
 mkdirSync(".local", { recursive: true });
 writeFileSync(
   ".local/admin-access.txt",
-  `Private admin access\n\nURL: ${process.env.SITE_URL || "http://localhost:3000"}/admin\nEmail: ${process.env.ADMIN_EMAIL || "musfiquerrhman@gmail.com"}\nPassword: ${password}\n\nNever share or commit this file.\n`,
+  `Private admin access\n\nURL: ${process.env.SITE_URL || "http://localhost:3000"}/musfiq97\nEmail: ${process.env.ADMIN_EMAIL || "musfiquerrhman@gmail.com"}\nPassword: ${password}\n\nNever share or commit this file.\n`,
   { mode: 0o600 },
 );
 console.log(

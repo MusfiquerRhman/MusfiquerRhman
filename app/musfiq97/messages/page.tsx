@@ -16,7 +16,7 @@ type Message = {
   created_at: Date;
 };
 export default async function Messages() {
-  if (!(await isAdmin())) redirect("/admin/login");
+  if (!(await isAdmin())) redirect("/musfiq97/login");
   const { rows } = await db().query<Message>(
     "SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 200",
   );

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, FileText, ArrowUpRight, Pencil } from "lucide-react";
+import { Plus, FileText, ArrowUpRight, Pencil, Star } from "lucide-react";
 import { isAdmin } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { formatDate, type Post } from "@/lib/posts";
@@ -12,9 +12,11 @@ export default async function AdminPage({
 }: {
   searchParams: Promise<{ notice?: string }>;
 }) {
-  if (!(await isAdmin())) redirect("/admin/login");
-  const { rows: posts } = await db().query<Post>(
-    "SELECT * FROM posts ORDER BY updated_at DESC",
+  if (!(await isAdmin())) redirect("/musfiq97/login");
+  const { rows: posts } = await db().query<
+    Post & { featured_slot: number | null }
+  >(
+    "SELECT p.*, f.slot AS featured_slot FROM posts p LEFT JOIN featured_posts f ON f.post_id = p.id ORDER BY p.updated_at DESC",
   );
   const notice = (await searchParams).notice;
   return (
@@ -27,7 +29,7 @@ export default async function AdminPage({
           </h1>
           <p>A home for your ideas, from first draft to published post.</p>
         </div>
-        <Link className="button button-primary" href="/admin/new">
+        <Link className="button button-primary" href="/musfiq97/new">
           <Plus size={18} />
           New post
         </Link>
@@ -80,7 +82,7 @@ export default async function AdminPage({
               {posts.map((post) => (
                 <tr key={post.id}>
                   <td>
-                    <Link href={`/admin/edit/${post.id}`}>{post.title}</Link>
+                    <Link href={`/musfiq97/edit/${post.id}`}>{post.title}</Link>
                     <span className="table-slug">/blog/{post.slug}</span>
                   </td>
                   <td>
@@ -89,6 +91,11 @@ export default async function AdminPage({
                     >
                       {post.published ? "Published" : "Draft"}
                     </span>
+                    {post.featured_slot && (
+                      <span className="featured-badge">
+                        <Star size={11} /> Featured {post.featured_slot}
+                      </span>
+                    )}
                   </td>
                   <td className="date-cell">{formatDate(post.updated_at)}</td>
                   <td>
@@ -105,7 +112,7 @@ export default async function AdminPage({
                       )}
                       <Link
                         className="icon-button"
-                        href={`/admin/edit/${post.id}`}
+                        href={`/musfiq97/edit/${post.id}`}
                         aria-label={`Edit ${post.title}`}
                       >
                         <Pencil size={17} />
@@ -126,7 +133,7 @@ export default async function AdminPage({
             Create your first post. Save it as a draft, or share it with the
             world.
           </p>
-          <Link className="button button-primary" href="/admin/new">
+          <Link className="button button-primary" href="/musfiq97/new">
             <Plus size={17} />
             Write your first post
           </Link>
