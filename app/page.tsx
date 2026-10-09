@@ -175,7 +175,7 @@ export default async function Home() {
               <Database size={17} /> PostgreSQL
             </span>
             <span>
-              <Cpu size={17} /> Python
+              <Cpu size={17} /> tRPC
             </span>
             <span className="strip-note">THE TOOLS. NOT THE LIMIT.</span>
           </div>
