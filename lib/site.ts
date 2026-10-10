@@ -2,7 +2,7 @@ export const profile = {
   name: "Musfiquer Rhman",
   email: "musfiquerrhman@gmail.com",
   whatsapp: "@musfiquerrhman",
-  whatsappUrl: "https://wa.me/8801959793534",
+  whatsappUrl: "https://wa.me/@musfiquerrhman",
   location: "Dhaka, Bangladesh",
   role: "Full-stack developer",
   cv: "/musfiquer-rhman-cv.pdf",
